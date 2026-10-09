@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0}</style></head><body>
+<title>Word Forge 派生語ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#EEF1F5;--surface:#FFFFFF;--ink:#16213A;--muted:#5B6680;--line:#D5DBE5;
+  --accent:#0F8B7D;--accent-ink:#FFFFFF;--gold:#C98F00;--bad:#C8413B;--good:#1E8E5A;--chip:#E3F2EF;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#0E1424;--surface:#172036;--ink:#E8ECF4;--muted:#9AA6BF;--line:#2A3550;
+  --accent:#3CC8B4;--accent-ink:#06201C;--gold:#F2C14E;--bad:#F07167;--good:#4CC38A;--chip:#18383A;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--bg:#0E1424;--surface:#172036;--ink:#E8ECF4;--muted:#9AA6BF;--line:#2A3550;
+  --accent:#3CC8B4;--accent-ink:#06201C;--gold:#F2C14E;--bad:#F07167;--good:#4CC38A;--chip:#18383A;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:20px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:30px;font-weight:800}
+h2{font-size:19px;font-weight:800}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.stats{display:flex;gap:18px;font-variant-numeric:tabular-nums}
+.stat b{display:block;font-family:var(--display);font-size:24px;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.levelcard{display:grid;gap:12px}
+.lvrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.lvname{font-family:var(--display);font-weight:800;font-size:19px}
+.lvtitle{color:var(--muted);font-size:13px;margin-left:6px}
+.lvxp{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.lvbar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.lvbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .4s ease}
+.themes{display:flex;gap:10px;flex-wrap:wrap}
+.swatch{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);cursor:pointer;display:grid;place-items:center;font-size:15px;color:#fff;padding:0}
+.swatch.locked{cursor:not-allowed;opacity:.35}
+.swatch.active{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:10px}
+.badge{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:3px;text-align:center;background:var(--bg)}
+.badge.got{background:color-mix(in srgb,var(--accent) 10%,var(--surface));border-color:var(--accent)}
+.badge.locked{opacity:.4}
+.badge .ic{font-size:22px}
+.badge .nm{font-size:12px;font-weight:700}
+.badge .dsc{font-size:11px;color:var(--muted)}
+.mission{display:grid;gap:14px}
+.mission-row{display:flex;gap:10px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 16px;font-weight:700}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.map{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tile{display:grid;gap:2px;justify-items:center;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:700}
+.tile .n{font-family:var(--display);font-size:20px}
+.tile .st{font-size:13px;letter-spacing:1px;color:var(--gold)}
+.tile.next{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.tile small{font-size:10.5px;color:var(--muted);font-weight:400}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:5.5em 1fr 4.5em;gap:10px;align-items:center;font-size:14px}
+.track{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.fill{height:100%;background:var(--bad)}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+/* play */
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.timer{font-family:var(--mono);font-size:20px;font-weight:700}
+.timer.over{color:var(--bad)}
+.tbar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.tbar i{display:block;height:100%;background:var(--accent);transition:width .9s linear}
+.combo{font-family:var(--display);font-weight:800;color:var(--gold)}
+.dots{display:flex;gap:6px}
+.dots i{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.dots i.ok{background:var(--good)}.dots i.ng{background:var(--bad)}.dots i.cur{outline:2px solid var(--accent);outline-offset:1px}
+.card{display:grid;gap:16px}
+.given{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--accent);letter-spacing:.01em}
+.sentence{font-size:19px;line-height:1.75;font-family:Georgia,"Times New Roman",serif}
+.blank{display:inline-block;min-width:6em;border-bottom:2px solid var(--ink);text-align:center;font-family:var(--mono);font-size:17px}
+.blank.ok{color:var(--good);border-color:var(--good)}.blank.ng{color:var(--bad);border-color:var(--bad)}
+.answer{display:flex;gap:8px}
+.answer input{flex:1;min-width:0;font-family:var(--mono);font-size:20px;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.fb{border-radius:10px;padding:12px 14px;display:grid;gap:4px}
+.fb.ok{background:color-mix(in srgb,var(--good) 14%,transparent)}
+.fb.ng{background:color-mix(in srgb,var(--bad) 13%,transparent)}
+.fb .big{font-family:var(--mono);font-weight:700;font-size:18px}
+.chip{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--ink)}
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+.shake{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.pop,.shake{animation:none}.tbar i{transition:none}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:700}
+td.m{font-family:var(--mono)}
+.scroll{overflow-x:auto}
+.result-head{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.score{font-family:var(--display);font-size:54px;font-weight:800;line-height:1}
+.stars{font-size:28px;color:var(--gold);letter-spacing:4px}
+.note{font-size:12.5px;color:var(--muted)}
+@media (max-width:480px){.map{grid-template-columns:repeat(5,1fr);gap:5px}.given{font-size:24px}.sentence{font-size:17px}.stats{gap:12px}}
+</style>
+
+<div class="wrap" id="app"></div>
+
+<script>
+const SETS=[
+[["persist","Her ___ in the face of repeated failure eventually won her the prize.","persistence","基本"],
+ ["mystery","There was something ___ about the way the house had been left.","mysterious","基本"],
+ ["emphasis","The teacher wished to ___ the importance of reading widely.","emphasize|emphasise","基本"],
+ ["proud","He spoke of his daughter's achievement with evident ___.","pride","不規則","proudness は×。形が大きく変わる"],
+ ["reluctant","She agreed, though ___, to take on the extra work.","reluctantly","基本"],
+ ["betray","The ___ of a close friend wounded him more deeply than the loss itself.","betrayal","基本"],
+ ["suspicious","His ___ were confirmed when he found the letter in the drawer.","suspicions","複数形","were confirmed が合図で複数形"]],
+[["analyze","A careful ___ of the data revealed an unexpected pattern.","analysis","不規則","analyzation は×"],
+ ["comprehend","The guidebook gives a ___ account of the region's history.","comprehensive","似た形","comprehensible（理解できる）ではなく「包括的な」"],
+ ["anxious","Her ___ grew as the hour of the interview approached.","anxiety","不規則","anxiousness より anxiety"],
+ ["strength","Regular practice will ___ your command of the language.","strengthen","基本"],
+ ["scorn","She gave him a ___ look and walked away without speaking.","scornful","基本"],
+ ["maintain","The ___ of the old building cost more than the city had expected.","maintenance","似た形","maintainance と綴らない。ai が e になる"],
+ ["defiance","The child folded his arms in a ___ gesture.","defiant","基本"]],
+[["obscure","The poem's deliberate ___ has frustrated generations of readers.","obscurity","基本"],
+ ["monotony","The ___ hum of the engine soon put the passengers to sleep.","monotonous","基本"],
+ ["simplify","The engineer achieved a great ___ of the design without losing any function.","simplification","基本"],
+ ["wise","With the ___ of age, he came to regret his earlier harshness.","wisdom","不規則","wiseness は×"],
+ ["pursuit","He decided to ___ a career in medicine instead of law.","pursue","基本"],
+ ["venom","He delivered the insult in a low, ___ voice.","venomous","基本"],
+ ["endure","The marathon was a test of physical and mental ___.","endurance","基本"]],
+[["comply","Full ___ with the new regulations is required by the end of the month.","compliance","基本"],
+ ["repetition","The ___ nature of the work drove him to quit within a month.","repetitive","基本"],
+ ["humble","She accepted the award with genuine ___.","humility","不規則","humbleness より humility"],
+ ["liberation","The new law will ___ thousands of prisoners held without trial.","liberate","基本"],
+ ["neglect","The garden had grown wild after years of ___ care.","neglectful","基本"],
+ ["intervene","The doctor's swift ___ saved the patient's life.","intervention","基本"],
+ ["conscious","The blow knocked him into ___ for several minutes.","unconsciousness","接頭辞","into ___ で「無意識状態」。un と ness の両方が要る"]],
+[["resemble","The ___ between the twins was so strong that even their mother was fooled.","resemblance","基本"],
+ ["tyranny","The ___ rule of the new governor provoked a rebellion.","tyrannical","基本"],
+ ["breadth","They decided to ___ the road to allow for two lanes of traffic.","broaden","不規則","breadthen は×。broad に戻して en"],
+ ["luxury","They stayed in a ___ hotel overlooking the harbour.","luxurious","基本"],
+ ["criticism","It is easy to ___ a plan without offering an alternative.","criticize|criticise","基本"],
+ ["choice","You must ___ between the two before Friday.","choose","不規則","綴りが大きく変わる"],
+ ["grateful","He wrote to express his ___ for their hospitality.","gratitude|gratefulness","不規則","gratitude が標準"]],
+[["lose","The team's third ___ of the season ended their hopes.","loss","不規則","名詞は loss。loosing ではない"],
+ ["courage","The speech ___ the soldiers to hold their position one more night.","encouraged","接頭辞","en で動詞化し、さらに過去形"],
+ ["decisive","The general's ___ to retreat surprised his officers.","decision","似た形","decisiveness ではなく「撤退という決定」"],
+ ["poverty","The ___ farmers could not afford seed for the spring.","poor","不規則","形容詞は poor"],
+ ["apply","Her ___ for the scholarship was rejected without explanation.","application","基本"],
+ ["sincere","He thanked them with obvious ___.","sincerity","基本"],
+ ["prohibition","The law will ___ the sale of these products to minors.","prohibit","基本"]],
+[["curious","Her ___ got the better of her, and she opened the box.","curiosity","不規則","curiousness は×。ou が o になる"],
+ ["assemble","The ___ fell silent when the headmaster entered.","assembly","基本"],
+ ["furious","He slammed the door in a ___.","fury","不規則","形容詞より短くなる"],
+ ["pretend","His concern was mere ___; he cared nothing for her.","pretence|pretense","不規則","pretending は品詞が違う"],
+ ["weary","A great ___ came over him as the journey dragged on.","weariness","基本"],
+ ["flexible","The new schedule allows greater ___ for working parents.","flexibility","基本"],
+ ["populate","The ___ of the island has halved in fifty years.","population","基本"]],
+[["inquire","She made several ___ before finding the right office.","inquiries|enquiries","複数形","several が合図。y → ies"],
+ ["solemn","The ceremony was conducted with great ___.","solemnity","基本"],
+ ["abandon","The ___ of the project came as a shock to the staff.","abandonment","基本"],
+ ["hostile","The crowd's ___ made it impossible for him to finish speaking.","hostility","不規則","hostileness は×"],
+ ["justify","He offered no ___ for his behaviour.","justification","基本"],
+ ["threaten","The ___ of famine hung over the region.","threat","不規則","動詞より短くなる"],
+ ["oblige","She felt under no ___ to reply.","obligation","基本"]],
+[["forbade","Her parents had ___ her to leave the house after dark.","forbidden","時制・態","had ___ で過去分詞"],
+ ["strife","She had been ___ for years to win her father's approval.","striving","時制・態","had been ___ing。f が v、e を落とす"],
+ ["seizure","The police ___ the smuggler's documents at the border last week.","seized","時制・態","last week で過去形。ei の順"],
+ ["woven","The old woman sat by the fire, ___ a basket from dried reeds.","weaving","時制・態","分詞構文で ing"],
+ ["tread","The narrow path had been ___ by generations of pilgrims.","trodden|trod","時制・態","had been ___ で受動の過去分詞"],
+ ["sting","Her pride was deeply ___ by his careless remark.","stung","時制・態","stinged は×"],
+ ["compulsion","He felt ___ to tell the truth, whatever the cost.","compelled","時制・態","felt ___ で過去分詞。l を2つ"]],
+[["respect","Tom and Anna finished first and second, ___.","respectively","似た形","respectfully（丁寧に）ではなく「それぞれ」"],
+ ["industry","She is an ___ student who has never missed a deadline.","industrious","似た形","industrial（産業の）ではなく「勤勉な」"],
+ ["sense","It would be ___ to take an umbrella; the sky looks threatening.","sensible","似た形","sensitive（敏感な）ではなく「分別のある」"],
+ ["economy","This small car is very ___ to run.","economical","似た形","economic（経済の）ではなく「節約になる」"],
+ ["imagine","The children came up with a highly ___ solution to the problem.","imaginative","似た形","imaginary（架空の）ではなく「想像力豊かな」"],
+ ["credit","His story was hardly ___; nobody in the room believed him.","credible","似た形","creditable / credulous ではなく「信じられる」"],
+ ["history","Scholars questioned the ___ accuracy of the film.","historical","似た形","historic（歴史的に重要な）ではなく「史実の」"]],
+[["hesitated","After a moment's ___, she knocked twice upon the door.","hesitation","基本"],
+ ["vanity","He was a ___ man who could not pass a mirror without glancing into it.","vain","不規則","名詞より短くなる。vanitous は存在しない"],
+ ["obedient","The dog's perfect ___ astonished the visitors.","obedience","基本"],
+ ["gloom","The ___ corridors of the old house smelled of damp.","gloomy","基本"],
+ ["bitterly","She could not hide the ___ in her voice.","bitterness","基本"],
+ ["swore","He had ___ never to return to that village.","sworn","時制・態","had ___ で過去分詞。swear, swore, sworn"],
+ ["inhabit","The island's few ___ lived by fishing.","inhabitants","複数形","few と lived が合図で複数形"]],
+[["persuaded","No amount of ___ could change the old man's mind.","persuasion","基本","persuadtion は×。de が sion になる"],
+ ["destroyed","The fire caused the complete ___ of the east wing.","destruction","不規則","destroyment は×。stroy が struct になる"],
+ ["ambition","He was far too ___ to remain a clerk forever.","ambitious","基本"],
+ ["length","The shadows began to ___ as the sun sank.","lengthen","基本"],
+ ["intense","The ___ of her gaze made him look away.","intensity","基本"],
+ ["sympathy","\"I understand,\" she said, nodding ___.","sympathetically","基本","副詞は ically"],
+ ["child","Despite his age, he retained a ___ sense of wonder at the world.","childlike","似た形","childish（幼稚な）ではなく「子どものように純粋な」"]],
+[["proposed","The ___ was greeted with silence around the table.","proposal|proposition","基本"],
+ ["heroic","The ___ of the rescuers was praised in every newspaper.","heroism","基本"],
+ ["fled","The prisoner's ___ was not discovered until morning.","flight","不規則","flee の名詞は flight"],
+ ["doubt","It was ___ whether the letter would ever reach her.","doubtful","基本"],
+ ["shame","He hung his head, ___ of what he had done.","ashamed","接頭辞","be ashamed of。a を付けて形容詞"],
+ ["explain","He offered no ___ for his long absence.","explanation","不規則","explaination は×。ai が a になる"],
+ ["fear","The ___ child refused to enter the dark room.","fearful","似た形","fearsome（恐ろしい）ではなく「怖がっている」"]],
+[["anticipated","The children waited in eager ___ of the holidays.","anticipation","基本"],
+ ["ignorant","His ___ of the law was no excuse.","ignorance","基本"],
+ ["miserable","She had never known such ___.","misery","不規則","形容詞より短くなる"],
+ ["horror","She was ___ to discover that the letters had been burned.","horrified","似た形","horrible / horrific は物事の側。人の気持ちは horrified"],
+ ["lying","The book had ___ unopened on the table for years.","lain","時制・態","lie, lay, lain。laid は lay（置く）の過去分詞"],
+ ["precise","He spoke with the ___ of a lawyer.","precision","基本"],
+ ["contempt","He regarded their efforts with a ___ smile.","contemptuous","似た形","contemptible（軽蔑に値する）ではなく「軽蔑を示す」"]],
+[["pronounce","Her ___ of the foreign names was flawless.","pronunciation","不規則","pronounciation は×。ou が u になる"],
+ ["spontaneous","The ___ of her laughter charmed everyone.","spontaneity","不規則","spontaneousness より spontaneity"],
+ ["comfort","The waiting room was cold and ___.","uncomfortable|comfortless","接頭辞","cold と並ぶ否定の形容詞"],
+ ["seeking","They had ___ shelter from the storm in a ruined chapel.","sought","時制・態","seek, sought, sought"],
+ ["deliberately","After long ___, the jury returned its verdict.","deliberation","基本"],
+ ["memory","It was a ___ evening, and she would recall it for the rest of her life.","memorable","似た形","memorial（記念の）ではなく「忘れられない」"],
+ ["thief","Several ___ had been reported in the neighbourhood.","thefts","複数形","thief の行為は theft。several で複数"]],
+[["solitary","He had grown used to ___ in the long winter months.","solitude","不規則","solitariness より solitude"],
+ ["generous","Her ___ was known throughout the county.","generosity","不規則","generousity は×。ou が落ちる"],
+ ["peculiar","The old house had many ___ that visitors found charming.","peculiarities","複数形","many が合図。y を ies に"],
+ ["indignant","She rose in ___ and left the room.","indignation","基本"],
+ ["binding","The prisoner's hands had been ___ behind his back.","bound","時制・態","bind, bound, bound"],
+ ["vigor","He shook my hand ___.","vigorously","基本","vigor に ous、さらに ly"],
+ ["compare","The two paintings are hardly ___; one is a masterpiece, the other a mere copy.","comparable","似た形","comparative（比較の）ではなく「匹敵する」"]],
+[["eloquent","The ___ of his speech won over even his enemies.","eloquence","基本"],
+ ["vary","The weather in the mountains is extremely ___.","variable","似た形","various（様々な）ではなく「変わりやすい」"],
+ ["grief","She ___ for her husband for many years.","grieved","不規則","grief の動詞は grieve。f が v になり、さらに過去形"],
+ ["vague","His second answer was even ___ than the first.","vaguer|more vague","基本","than が合図で比較級（過去問の deeper と同じ型）"],
+ ["prove","The detective had no ___ of the man's guilt.","proof","不規則","v が f になる"],
+ ["loyal","She had never doubted her servant's ___.","loyalty","基本"],
+ ["dwelling","The family had ___ in that valley for three generations.","dwelt|dwelled","時制・態","dwell, dwelt, dwelt"]],
+[["conceal","The ___ of the evidence was itself a crime.","concealment","基本"],
+ ["fragile","The ___ of the old manuscript made it impossible to handle.","fragility","基本"],
+ ["ghost","A ___ figure appeared at the end of the corridor.","ghostly","基本"],
+ ["apprehend","He waited with growing ___ for the verdict.","apprehension","基本"],
+ ["shook","The foundations had been ___ by the earthquake.","shaken","時制・態","shake, shook, shaken"],
+ ["succeed","The ___ to the throne passed to his younger brother.","succession","似た形","success（成功）ではなく「継承」"],
+ ["pity","The beggar's ___ cries could be heard down the street.","pitiful|piteous","似た形","pitiless（無慈悲な）ではなく「哀れな」"]],
+[["authority","He spoke in an ___ tone that silenced the room.","authoritative","似た形","authoritarian（独裁的な）ではなく「威厳のある」"],
+ ["tolerate","Her ___ of his rudeness astonished her friends.","tolerance|toleration","基本"],
+ ["admit","His ___ of guilt came too late.","admission","不規則","admitment は×。t が ssion になる"],
+ ["dignity","She bore her misfortune in ___ silence.","dignified","基本"],
+ ["hung","The murderer was ___ at dawn.","hanged","時制・態","処刑の意味では hanged。物を吊るす時だけ hung"],
+ ["high","The ___ of the tower made her dizzy.","height","不規則","highness は称号。高さは height"],
+ ["signify","The ___ of the letter was not lost on him.","significance","基本"]],
+[["imprison","His long ___ had left him pale and weak.","imprisonment","基本"],
+ ["prosper","The town enjoyed a period of great ___.","prosperity","基本"],
+ ["savage","The ___ of the attack shocked the villagers.","savagery","基本"],
+ ["lay","The hen had ___ three eggs before noon.","laid","時制・態","lay（置く・産む）, laid, laid。lain は lie の過去分詞"],
+ ["destiny","They believed they were ___ to meet again.","destined","基本"],
+ ["alternate","There was no ___ but to wait for the tide to turn.","alternative","似た形","alternate（交互の）ではなく「代わりの手段」"],
+ ["sane","He began to fear for his own ___.","sanity","基本"]]
+];
+const ITEMS={};
+SETS.forEach((s,si)=>s.forEach((q,qi)=>{const id=(si+1)+"-"+(qi+1);ITEMS[id]={id,set:si+1,word:q[0],sent:q[1],ans:q[2].split("|"),type:q[3],tip:q[4]||""};}));
+const TYPES=["不規則","接頭辞","複数形","時制・態","似た形","基本"];
+const TARGET=180;
+
+const LEVELS=[
+ {lv:1,need:0,title:"語形見習い"},
+ {lv:2,need:150,title:"接尾辞ハンター"},
+ {lv:3,need:400,title:"語幹トレーサー"},
+ {lv:4,need:800,title:"品詞シフター"},
+ {lv:5,need:1400,title:"綴り職人"},
+ {lv:6,need:2200,title:"活用マスター"},
+ {lv:7,need:3200,title:"語源探偵"},
+ {lv:8,need:4500,title:"即答の使い手"},
+ {lv:9,need:6200,title:"派生語の賢者"},
+ {lv:10,need:8500,title:"Word Forge 達人"}
+];
+function levelInfo(xpVal){
+  let cur=LEVELS[0];
+  for(const l of LEVELS){if(xpVal>=l.need)cur=l;else break}
+  const next=LEVELS[cur.lv]||null;
+  const span=next?next.need-cur.need:1;
+  const prog=next?Math.min(1,(xpVal-cur.need)/span):1;
+  return {lv:cur.lv,title:cur.title,need:cur.need,next,prog,xp:xpVal};
+}
+const THEMES=[
+ {id:"default",name:"若葉",unlockLv:1,accent:"#0F8B7D",ink:"#FFFFFF",gold:"#C98F00"},
+ {id:"coral",name:"焔",unlockLv:2,accent:"#E4572E",ink:"#FFFFFF",gold:"#F2A65A"},
+ {id:"violet",name:"紫電",unlockLv:4,accent:"#7C5CFC",ink:"#FFFFFF",gold:"#F2C14E"},
+ {id:"ocean",name:"蒼海",unlockLv:6,accent:"#1D74C4",ink:"#FFFFFF",gold:"#FFD166"},
+ {id:"crimson",name:"緋色",unlockLv:8,accent:"#C81E5C",ink:"#FFFFFF",gold:"#F4B942"},
+ {id:"gold",name:"黄金",unlockLv:10,accent:"#B8860B",ink:"#241800",gold:"#E8C468"}
+];
+function applyTheme(id){
+  const t=THEMES.find(x=>x.id===id)||THEMES[0];
+  const r=document.documentElement.style;
+  r.setProperty("--accent",t.accent);r.setProperty("--accent-ink",t.ink);r.setProperty("--gold",t.gold);
+  themeId=t.id;
+}
+let themeId="default";
+try{themeId=localStorage.getItem("wordforge.theme")||"default"}catch(e){}
+function selectTheme(id,lv){
+  const t=THEMES.find(x=>x.id===id);if(!t||lv<t.unlockLv)return;
+  try{localStorage.setItem("wordforge.theme",id)}catch(e){}
+  applyTheme(id);
+  if(db){db.doc("profile/main").set({theme:id}).catch(()=>{})}
+  if(view==="home")renderHome();
+}
+const BADGES=[
+ {id:"first_set",name:"はじめの一歩",desc:"最初のセットをクリア",icon:"🌱",check:()=>attempts.some(a=>a.mode==="set")},
+ {id:"perfect",name:"満点",desc:"1セットで7問全問正解",icon:"🎯",check:()=>attempts.some(a=>a.correct===a.total)},
+ {id:"speedy",name:"3分切り",desc:"3分以内に全問正解",icon:"⚡",check:()=>attempts.some(a=>a.mode==="set"&&a.correct===a.total&&a.seconds<=TARGET)},
+ {id:"streak3",name:"3日継続",desc:"3日連続で取り組んだ",icon:"🔥",check:()=>streak()>=3},
+ {id:"streak7",name:"1週間継続",desc:"7日連続で取り組んだ",icon:"🏅",check:()=>streak()>=7},
+ {id:"allseen",name:"全問踏破",desc:"Set 1〜10の70問すべてに挑戦",icon:"🗺️",check:()=>Object.keys(firstTry()).filter(id=>ITEMS[id].set<=10).length>=70},
+ {id:"realseen",name:"本番型踏破",desc:"本番型Set 11〜20の70問すべてに挑戦",icon:"📜",check:()=>Object.keys(firstTry()).filter(id=>ITEMS[id].set>10).length>=70},
+ {id:"notype",name:"弱点ゼロ",desc:"5分類すべてで失点なし（10問以上挑戦時）",icon:"👑",check:()=>{const ft=firstTry(),ids=Object.keys(ft);if(ids.length<10)return false;const m={};TYPES.forEach(t=>m[t]={tot:0,ng:0});ids.forEach(id=>{const t=ITEMS[id].type;m[t].tot++;if(!ft[id].ok)m[t].ng++});return TYPES.every(t=>m[t].tot===0||m[t].ng===0)}}
+];
+
+let db=null, attempts=[], view="home", game=null, result=null, saveNote="", wtRange=null;
+const LS="wordforge.attempts";
+function lsLoad(){try{return JSON.parse(localStorage.getItem(LS)||"[]")}catch(e){return[]}}
+function lsSave(){try{localStorage.setItem(LS,JSON.stringify(attempts))}catch(e){}}
+attempts=lsLoad();
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm=s=>s.trim().toLowerCase().replace(/[’‘]/g,"'").replace(/\s+/g," ");
+const today=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+
+function sorted(){return attempts.slice().sort((a,b)=>a.at<b.at?-1:1)}
+function setBest(n){let best=null;for(const a of attempts)if(a.mode==="set"&&a.set===n){if(!best||a.correct>best.correct||(a.correct===best.correct&&a.seconds<best.seconds))best=a}return best}
+function starsOf(a){if(!a)return 0;if(a.correct===7&&a.seconds<=TARGET)return 3;if(a.correct>=6)return 2;if(a.correct>=4)return 1;return 0}
+function nextSet(){for(let n=1;n<=SETS.length;n++)if(!setBest(n))return n;return null}
+function history(){const h={};for(const a of sorted())for(const it of a.items||[]){(h[it.id]=h[it.id]||[]).push(it.ok)}return h}
+function reviewQueue(){const h=history(),q=[];for(const id in h){const r=h[id];const lastNg=r.lastIndexOf(false);if(lastNg<0)continue;const okAfter=r.length-1-lastNg;if(okAfter<2)q.push({id,okAfter,ng:r.filter(x=>!x).length})}q.sort((a,b)=>a.okAfter-b.okAfter||b.ng-a.ng);return q.map(x=>x.id)}
+function firstTry(){const seen={};for(const a of sorted())if(a.mode==="set")for(const it of a.items)if(!(it.id in seen))seen[it.id]=it;return seen}
+function streak(){const days=new Set(attempts.map(a=>a.day));let n=0;const d=new Date();if(!days.has(today()))d.setDate(d.getDate()-1);for(;;){const k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(days.has(k)){n++;d.setDate(d.getDate()-1)}else break}return n}
+function xp(){return attempts.reduce((s,a)=>s+(a.points||0),0)}
+
+function renderHome(){
+  const ns=nextSet(), rq=reviewQueue(), ft=firstTry(), doneToday=attempts.some(a=>a.day===today());
+  const tiles=SETS.map((_,i)=>{const n=i+1,b=setBest(n),st=starsOf(b);return `<button class="tile${n===ns?" next":""}" data-set="${n}" aria-label="Set ${n}"><span class="n">${n}</span><span class="st">${"★".repeat(st)}${"☆".repeat(3-st)}</span><small>${b?b.correct+"/7 "+fmt(b.seconds):n===9?"時制・態":n===10?"似た形":n>10?"本番型":"未挑戦"}</small></button>`}).join("");
+  const ftIds=Object.keys(ft);
+  const hasReal=ftIds.some(id=>ITEMS[id].set>10);
+  const range=wtRange||(hasReal?"real":"pre");
+  const inRange=id=>range==="real"?ITEMS[id].set>10:ITEMS[id].set<=10;
+  const byType={};TYPES.forEach(t=>byType[t]={tot:0,ng:0});
+  const rIds=ftIds.filter(inRange);rIds.forEach(id=>{const t=ITEMS[id].type;byType[t].tot++;if(!ft[id].ok)byType[t].ng++});
+  const bars=TYPES.map(t=>{const b=byType[t];const r=b.tot?b.ng/b.tot:0;return `<div class="bar"><span>${t}</span><div class="track"><div class="fill" style="width:${Math.round(r*100)}%"></div></div><span class="v">${b.ng}/${b.tot}問</span></div>`}).join("");
+  let missionText, mainBtn;
+  if(ns){const lbl=ns>10?`本番型 Set ${ns}`:`Set ${ns}`;missionText=`今日は <b>${lbl}</b>（7問・目標3分）${rq.length?` ＋ 復習 ${Math.min(rq.length,7)}問`:""}`;mainBtn=`<button class="primary" id="go-main" data-set="${ns}">${lbl} をはじめる</button>`}
+  else{missionText=`140問すべて1周済み。毎日は<b>復習</b>と<b>ミックス7問</b>で即答を固める`;mainBtn=`<button class="primary" id="go-mix">ミックス7問</button>`}
+  const li=levelInfo(xp());
+  const nextTheme=THEMES.find(t=>t.unlockLv===li.lv+1);
+  const swatches=THEMES.map(t=>{const unlocked=li.lv>=t.unlockLv;return `<button class="swatch${unlocked?"":" locked"}${themeId===t.id?" active":""}" style="background:${t.accent}" data-theme="${t.id}" title="${esc(t.name)}${unlocked?"":" — Lv."+t.unlockLv+"で解放"}" aria-label="テーマ ${esc(t.name)}">${unlocked?(themeId===t.id?"✓":""):"🔒"}</button>`}).join("");
+  const badgeCards=BADGES.map(b=>{const got=b.check();return `<div class="badge${got?" got":" locked"}"><div class="ic">${b.icon}</div><div class="nm">${esc(b.name)}</div><div class="dsc">${esc(b.desc)}</div></div>`}).join("");
+  $("#app").innerHTML=`
+  <header class="top">
+    <div><div class="eyebrow">渋渋帰国生入試 · Word Formation</div><h1>Word Forge</h1></div>
+    <div class="stats">
+      <div class="stat"><b>${streak()}</b><span>連続日数</span></div>
+      <div class="stat"><b>Lv.${li.lv}</b><span>${xp()} XP</span></div>
+      <div class="stat"><b>${ftIds.length}/${Object.keys(ITEMS).length}</b><span>1周目</span></div>
+    </div>
+  </header>
+  <section class="panel levelcard">
+    <div class="lvrow"><div><span class="lvname">Lv.${li.lv}</span><span class="lvtitle">${esc(li.title)}</span></div><span class="lvxp">${li.next?(li.xp-li.need)+" / "+(li.next.need-li.need)+" XP":"MAX"}</span></div>
+    <div class="lvbar"><i style="width:${Math.round(li.prog*100)}%"></i></div>
+    <div class="note">${li.next?`次のレベルで${nextTheme?"テーマ「"+esc(nextTheme.name)+"」を":""}解放`:"最高レベルに到達"}</div>
+    <div class="themes">${swatches}</div>
+  </section>
+  <section class="panel mission">
+    <div class="eyebrow">${doneToday?"今日のミッション · 達成済み ✓":"今日のミッション"}</div>
+    <div style="font-size:17px">${missionText}</div>
+    <div class="mission-row">${mainBtn}<button id="go-review" ${rq.length?"":"disabled"}>復習 ${rq.length}問</button>${ns?"":""}</div>
+    <div class="note">提示語を見て、空所に入る形をタイプ。スペルは1文字でも違えば不正解。連続正解でコンボ倍率が上がる。</div>
+  </section>
+  <section class="panel" style="display:grid;gap:12px">
+    <h2>予想問題マップ</h2>
+    <div class="map">${tiles}</div>
+    <div class="note">1〜10 = 予想問題。11〜20 = 本番型（過去問と同じく、提示語が本文の活用形のまま出る。出題されやすい語を厳選）。★★★ = 7/7かつ3分以内 · ★★ = 6問以上 · ★ = 4問以上。</div>
+  </section>
+  <section class="panel" style="display:grid;gap:12px">
+    <div class="lvrow"><h2>弱い型（1周目の失点）</h2><div class="mission-row"><button id="wt-pre" class="${range==="pre"?"primary":""}" style="padding:6px 12px">Set 1〜10</button><button id="wt-real" class="${range==="real"?"primary":""}" style="padding:6px 12px">本番型 11〜20</button></div></div>
+    <div class="bars">${bars}</div>
+    <div class="note">各問題の初回結果だけで数える。赤が長い型から潰す。${saveNote}</div>
+  </section>
+  <section class="panel" style="display:grid;gap:12px">
+    <h2>実績</h2>
+    <div class="badges">${badgeCards}</div>
+  </section>
+  ${attempts.length?renderLog():""}`;
+  document.querySelectorAll("[data-set]").forEach(b=>b.onclick=()=>start("set",+b.dataset.set));
+  const gr=$("#go-review");if(gr)gr.onclick=()=>start("review");
+  const gm=$("#go-mix");if(gm)gm.onclick=()=>start("mix");
+  document.querySelectorAll(".swatch").forEach(b=>b.onclick=()=>selectTheme(b.dataset.theme,li.lv));
+  $("#wt-pre").onclick=()=>{wtRange="pre";renderHome()};
+  $("#wt-real").onclick=()=>{wtRange="real";renderHome()};
+}
+function renderLog(){
+  const rows=sorted().reverse().slice(0,30).map(a=>`<tr><td>${a.day.slice(5)}</td><td>${a.mode==="set"?"Set "+a.set:a.mode==="review"?"復習":"ミックス"}</td><td>${a.correct}/${a.total}</td><td>${fmt(a.seconds)}</td><td class="m">${(a.items||[]).filter(i=>!i.ok).map(i=>`${i.id} ${esc(i.given||"(空欄)")}`).join("<br>")||"—"}</td></tr>`).join("");
+  return `<section class="panel" style="display:grid;gap:10px"><h2>演習記録</h2><div class="scroll"><table><thead><tr><th>日付</th><th>内容</th><th>正解</th><th>時間</th><th>落とした問題（書いた答え）</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
+
+function pick7(ids){const a=ids.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a.slice(0,7)}
+function start(mode,n){
+  let ids;
+  if(mode==="set")ids=SETS[n-1].map((_,i)=>n+"-"+(i+1));
+  else if(mode==="review")ids=reviewQueue().slice(0,7);
+  else{const rq=reviewQueue();ids=rq.slice(0,3);ids=ids.concat(pick7(Object.keys(ITEMS).filter(i=>!ids.includes(i))).slice(0,7-ids.length));ids=pick7(ids)}
+  if(!ids.length)return;
+  game={mode,set:mode==="set"?n:null,ids,i:0,items:[],combo:0,points:0,t0:Date.now(),phase:"ask"};
+  view="play";renderPlay();
+  clearInterval(game.tick);game.tick=setInterval(tickTimer,1000);
+}
+function elapsed(){return Math.floor((Date.now()-game.t0)/1000)}
+function tickTimer(){if(view!=="play")return;const s=elapsed();const t=$("#timer");if(t){t.textContent=fmt(s);t.classList.toggle("over",s>TARGET)}const b=$("#tbar");if(b)b.style.width=Math.max(0,100-s/TARGET*100)+"%"}
+function renderPlay(){
+  const q=ITEMS[game.ids[game.i]];
+  const dots=game.ids.map((id,k)=>`<i class="${k<game.items.length?(game.items[k].ok?"ok":"ng"):k===game.i?"cur":""}"></i>`).join("");
+  const last=game.phase==="fb"?game.items[game.items.length-1]:null;
+  const blank=last?`<span class="blank ${last.ok?"ok":"ng"}">${esc(last.given||"—")}</span>`:`<span class="blank">&nbsp;</span>`;
+  const title=game.mode==="set"?(game.set>10?`本番型 Set ${game.set}`:`Set ${game.set}`):game.mode==="review"?"復習":"ミックス";
+  $("#app").innerHTML=`
+  <div class="hud"><button id="quit">← やめる</button><span class="eyebrow">${title} · ${game.i+1}/${game.ids.length}</span><span class="timer" id="timer">${fmt(elapsed())}</span></div>
+  <div class="tbar"><i id="tbar" style="width:${Math.max(0,100-elapsed()/TARGET*100)}%"></i></div>
+  <div class="hud"><div class="dots">${dots}</div><span class="combo">${game.combo>1?"COMBO ×"+game.combo:""}</span><span class="muted" style="font-variant-numeric:tabular-nums">${game.points} pt</span></div>
+  <section class="panel card">
+    <div><div class="eyebrow">提示語</div><div class="given">${esc(q.word)}</div></div>
+    <div class="sentence">${esc(q.sent).replace("___",blank)}</div>
+    ${game.phase==="ask"?`<form class="answer" id="f" autocomplete="off"><input id="ans" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="答え" placeholder="空所に入る形"><button class="primary">答える</button></form>`:
+    `<div class="fb ${last.ok?"ok":"ng"} ${last.ok?"pop":"shake"}">
+      <div><b>${last.ok?"正解！":"惜しい"}</b> <span class="chip">${q.type}</span> ${last.ok&&game.combo>1?`<span class="combo">+${last.pts}</span>`:""}</div>
+      ${last.ok?"":`<div>正解 <span class="big">${esc(q.ans.join(" / "))}</span></div>`}
+      ${q.tip?`<div class="muted">${esc(q.tip)}</div>`:""}
+    </div>
+    <button class="primary" id="next">${game.i+1<game.ids.length?"次へ（Enter）":"結果を見る（Enter）"}</button>`}
+  </section>`;
+  $("#quit").onclick=()=>{clearInterval(game.tick);game=null;view="home";renderHome()};
+  if(game.phase==="ask"){$("#ans").focus();$("#f").onsubmit=e=>{e.preventDefault();answer($("#ans").value)}}
+  else{$("#next").focus();$("#next").onclick=advance}
+}
+function answer(v){
+  const q=ITEMS[game.ids[game.i]],given=v.trim(),ok=q.ans.some(a=>norm(a)===norm(given));
+  let pts=0;if(ok){game.combo++;pts=10*Math.min(game.combo,5)}else game.combo=0;
+  game.points+=pts;game.items.push({id:q.id,given,ok,type:q.type,pts});game.phase="fb";renderPlay();
+}
+function advance(){game.i++;game.phase="ask";if(game.i>=game.ids.length)finish();else renderPlay()}
+async function finish(){
+  clearInterval(game.tick);
+  const seconds=elapsed(),correct=game.items.filter(i=>i.ok).length;
+  let bonus=0;if(correct===game.ids.length)bonus+=30;if(seconds<=TARGET)bonus+=20;
+  const xpBefore=xp(),liBefore=levelInfo(xpBefore),badgesBefore=BADGES.filter(b=>b.check());
+  const rec={at:new Date().toISOString(),day:today(),mode:game.mode,set:game.set,correct,total:game.ids.length,seconds,points:game.points+bonus,
+    items:game.items.map(({id,given,ok,type})=>({id,given,ok,type}))};
+  attempts.push(rec);lsSave();
+  const liAfter=levelInfo(xp()),badgesAfter=BADGES.filter(b=>b.check());
+  const newBadges=badgesAfter.filter(b=>!badgesBefore.includes(b));
+  result={rec,bonus,levelUp:liAfter.lv>liBefore.lv?liAfter:null,newBadges};
+  view="result";renderResult();
+  if(db){try{await db.collection("attempts").doc(rec.at.replace(/[^0-9A-Za-z]/g,"")).set(rec);saveNote=""}catch(e){saveNote="（記録のクラウド保存に失敗。この端末には残っている）"}}
+}
+function renderResult(){
+  const {rec,bonus,levelUp,newBadges}=result,st=rec.mode==="set"?starsOf(rec):null;
+  const miss=rec.items.filter(i=>!i.ok);
+  const unlockedTheme=levelUp?THEMES.find(t=>t.unlockLv===levelUp.lv):null;
+  $("#app").innerHTML=`
+  <section class="panel" style="display:grid;gap:14px">
+    <div class="eyebrow">${rec.mode==="set"?"Set "+rec.set:rec.mode==="review"?"復習":"ミックス"} · 結果</div>
+    <div class="result-head"><span class="score">${rec.correct}/${rec.total}</span>${st!==null?`<span class="stars">${"★".repeat(st)}${"☆".repeat(3-st)}</span>`:""}<span class="timer ${rec.seconds>TARGET?"over":""}">${fmt(rec.seconds)}</span></div>
+    <div class="muted">+${rec.points} XP${bonus?`（ボーナス ${bonus}：${rec.correct===rec.total?"全問正解 ":""}${rec.seconds<=TARGET?"3分以内":""}）`:""}</div>
+    ${levelUp?`<div class="fb ok pop"><div class="big">レベルアップ！ Lv.${levelUp.lv} ${esc(levelUp.title)}</div>${unlockedTheme?`<div>テーマ「${esc(unlockedTheme.name)}」を解放</div>`:""}</div>`:""}
+    ${newBadges&&newBadges.length?`<div class="fb ok pop"><div class="big">実績解除</div><div>${newBadges.map(b=>b.icon+" "+esc(b.name)).join("　")}</div></div>`:""}
+    ${miss.length?`<div class="scroll"><table><thead><tr><th>問題</th><th>書いた答え</th><th>正解</th><th>型</th></tr></thead><tbody>${miss.map(i=>`<tr><td>${i.id} ${esc(ITEMS[i.id].word)}</td><td class="m">${esc(i.given||"(空欄)")}</td><td class="m">${esc(ITEMS[i.id].ans[0])}</td><td><span class="chip">${i.type}</span></td></tr>`).join("")}</tbody></table></div><div class="note">落とした問題は「復習」に入る。2回続けて正解すると抜ける。</div>`:`<div style="font-size:17px">全問正解。</div>`}
+    <div class="mission-row"><button class="primary" id="home">ホームへ</button>${rec.mode==="set"?`<button id="again">もう一度</button>`:""}</div>
+  </section>`;
+  $("#home").onclick=()=>{view="home";renderHome()};
+  const ag=$("#again");if(ag)ag.onclick=()=>start("set",rec.set);
+  $("#home").focus();
+}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&view==="play"&&game&&game.phase==="fb"){e.preventDefault();advance()}});
+
+applyTheme(themeId);
+renderHome();
+// demo copy: progress is saved only in this browser (localStorage)
+
+</script>
+</body></html>
